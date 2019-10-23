@@ -1,0 +1,66 @@
+{
+  "name": "bitwise-array",
+  "version": "0.0.1",
+  "description": "Class that represents bitwise array",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "yarn build:clean && yarn build:lib && yarn build:flow",
+    "build:clean": "rimraf lib",
+    "build:lib": "BABEL_ENV=production && babel src --out-dir lib --ignore \"src/**/*.mtest.js\",\"src/**/*.test.js\",\"src/**/*.auxiliary.js\"",
+    "build:flow": "flow-copy-source src lib --ignore \"**/*.mtest.js\" --ignore \"**/*.test.js\"",
+    "commit": "git-cz",
+    "flow": "flow check",
+    "test:once": "jest",
+    "test:mongodb": "jest --config=jest.config.mongodb.js",
+    "test": "jest --watch",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ValSol/bitwise-array.git"
+  },
+  "keywords": [
+    "bitwise"
+  ],
+  "author": "Valentyn Soloviov <v.solovyov@intellect.ua>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ValSol/bitwise-array/issues"
+  },
+  "homepage": "https://github.com/ValSol/bitwise-array#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.6.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-eslint": "^10.0.3",
+    "babel-jest": "^24.9.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-preset-minify": "^0.5.1",
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "^3.0.2",
+    "eslint": "^6.4.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-flowtype": "^4.3.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.1",
+    "flow-bin": "^0.108.0",
+    "flow-copy-source": "^2.0.8",
+    "ghooks": "^2.0.4",
+    "jest": "^24.9.0",
+    "jest-environment-node": "^24.9.0",
+    "prettier": "^1.18.2",
+    "rimraf": "^3.0.0",
+    "semantic-release": "^15.13.24"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    },
+    "ghooks": {
+      "pre-commit": "yarn flow && yarn test:once && yarn test:mongodb"
+    }
+  }
+}

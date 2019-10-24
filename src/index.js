@@ -5,10 +5,27 @@ class BitwiseArray {
 
   value: Array<number>;
 
-  constructor(arg: number | BitwiseArray) {
+  constructor<T>(arg: number | BitwiseArray | Array<T>, arg2?: Array<T>) {
     if (arg instanceof BitwiseArray) {
       this.length = arg.length;
       this.value = [...arg.value];
+    } else if (Array.isArray(arg)) {
+      if (!Array.isArray(arg2)) {
+        throw new TypeError('Second arg has to be Array!');
+      }
+      this.length = arg2.length;
+      this.value = Array(Math.ceil(arg2.length / 32)).fill(0);
+
+      arg.forEach(item => {
+        const pos = arg2.indexOf(item);
+        if (pos === -1) {
+          throw new TypeError('Second arg has to be an item of the first arg array!');
+        }
+        if (pos) {
+          const { mask, segNum } = this.getMask(pos);
+          this.value[segNum] |= mask; // eslint-disable-line no-bitwise
+        }
+      });
     } else {
       this.length = arg;
       this.value = Array(Math.ceil(arg / 32)).fill(0);
@@ -72,6 +89,16 @@ class BitwiseArray {
     }
     bitwiseArray.value.forEach((segment, i) => {
       this.value[i] |= segment; // eslint-disable-line no-bitwise
+    });
+    return this;
+  }
+
+  xor(bitwiseArray: BitwiseArray) {
+    if (bitwiseArray.length !== this.length) {
+      throw new TypeError('Length of two bitwiseArrays have to be equal!');
+    }
+    bitwiseArray.value.forEach((segment, i) => {
+      this.value[i] ^= segment; // eslint-disable-line no-bitwise
     });
     return this;
   }
@@ -140,9 +167,12 @@ class BitwiseArray {
   }
 }
 
-const createBitwiseArray = (arg: number | BitwiseArray): BitwiseArray => {
-  return new BitwiseArray(arg);
-};
+function createBitwiseArray<T>(
+  arg: number | BitwiseArray | Array<T>,
+  arg2?: Array<T>,
+): BitwiseArray {
+  return new BitwiseArray(arg, arg2);
+}
 
 export default BitwiseArray;
 export { createBitwiseArray };

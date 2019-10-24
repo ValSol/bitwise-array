@@ -40,10 +40,15 @@ import BitwiseArray, { createBitwiseArray } from 'bitwise-array';
 const a = createBitwiseArray(5); // with length of array
 a.toString(); // '00000'
 a.set(1);
-a.toString(); // '01000
+a.toString(); // '01000'
 
 const b = createBitwiseArray(a); // with another bitwise array
-b.toString(); // '01000
+b.toString(); // '01000'
+
+const colors = ['RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'];
+const selectedColors = ['GREEN', 'INDIGO', 'ORANGE'];
+const c = createBitwiseArray(selectedColors, colors); // with 1 - selected items array, 2 - all items array
+c.toString(); // '0101010'
 ```
 
 or
@@ -52,8 +57,13 @@ or
 const a = new BitwiseArray(5); // with length of array
 a.toString(); // '00000'
 a.set(1);
-a.toString(); // '01000
+a.toString(); // '01000'
 
 const b = new BitwiseArray(a); // with another bitwise array
-b.toString(); // '01000
+b.toString(); // '01000'
+
+const colors = ['RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'];
+const selectedColors = ['GREEN', 'INDIGO', 'ORANGE'];
+const c = new BitwiseArray(selectedColors, colors); // with 1 - selected items array, 2 - all items array
+c.toString(); // '0101010'
 ```

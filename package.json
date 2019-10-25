@@ -1,6 +1,6 @@
 {
   "name": "bitwise-array",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Class that represents bitwise array",
   "main": "lib/index.js",
   "scripts": {
@@ -53,7 +53,7 @@
     "jest-environment-node": "^24.9.0",
     "prettier": "^1.18.2",
     "rimraf": "^3.0.0",
-    "semantic-release": "^15.13.24"
+    "semantic-release": "^15.13.27"
   },
   "config": {
     "commitizen": {

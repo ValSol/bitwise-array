@@ -37,6 +37,21 @@ class BitwiseArray {
     return this;
   }
 
+  invert() {
+    const reminder = this.length % 32;
+    this.value = this.value.reduce((prev, segment, i) => {
+      if (i < this.value.length - 1 || reminder === 0) {
+        prev.push(~segment);
+      } else {
+        const lastSegment = (~segment << (32 - reminder)) >>> (32 - reminder);
+        prev.push(lastSegment);
+      }
+
+      return prev;
+    }, []);
+    return this;
+  }
+
   getMask(pos: number): { mask: number, segNum: number } {
     if (pos >= this.length) {
       throw new TypeError(`Too large pos: ${pos}" for length: ${this.length}!`);
@@ -163,6 +178,15 @@ class BitwiseArray {
       bitwiseArray.value.some(
         (segment, i) => (this.value[i] & segment) !== 0, // eslint-disable-line no-bitwise
       )
+    );
+  }
+
+  isEqual(bitwiseArray: BitwiseArray): boolean {
+    if (bitwiseArray.length !== this.length) {
+      throw new TypeError('Length of two bitwiseArrays have to be equal!');
+    }
+    return bitwiseArray.value.every(
+      (segment, i) => this.value[i] === segment, // eslint-disable-line no-bitwise
     );
   }
 }

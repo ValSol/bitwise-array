@@ -20,7 +20,10 @@
     "url": "https://github.com/ValSol/bitwise-array.git"
   },
   "keywords": [
-    "bitwise"
+    "bits",
+    "bit array",
+    "bitwise",
+    "bitwise array"
   ],
   "author": "Valentyn Soloviov <v.solovyov@intellect.ua>",
   "license": "MIT",

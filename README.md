@@ -2,9 +2,12 @@
 
 The Class supports:
 
-- getting, setting and toggling of individual bits
+- getting, setting, unsetting and toggling of individual bits
 - bitwise operations with other bitwise array such as OR, XOR and AND
 - counting the number of "on" bits
+- comparison of two bitwise arrays
+- clearing or inverting all bits of bitwise array
+- selecting of items of an ordinary array based on the "on" bits of the bitwise array
 
 ## Usage
 
@@ -268,7 +271,7 @@ b.toString(); // '00010'
 a.isIntersected(b); // false
 ```
 
-take notice: if all bits of a first BitwaseArray are unset always return true
+**take notice!**: if all bits of a **first** BitwaseArray are unset always return true
 
 ```javascript
 const a = createBitwiseArray(5);

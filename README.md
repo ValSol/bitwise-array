@@ -180,7 +180,7 @@ a.invert();
 a.toString(); // '01101'
 ```
 
-#### add(secondBitwiseArray: BitwiseArray): BitwiseArray
+#### and(secondBitwiseArray: BitwiseArray): BitwiseArray
 
 Example:
 

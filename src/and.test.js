@@ -3,8 +3,8 @@
 
 import { createBitwiseArray } from './index';
 
-describe('add BitwiseArray method', () => {
-  test('should return bitwise ADD of 2 bitwiseArrays', () => {
+describe('and BitwiseArray method', () => {
+  test('should return bitwise AND of 2 bitwiseArrays', () => {
     const bitwiseArray = createBitwiseArray(62);
     bitwiseArray
       .set(0)
@@ -17,7 +17,7 @@ describe('add BitwiseArray method', () => {
       .set(2)
       .set(32)
       .set(33);
-    bitwiseArray.add(bitwiseArray2);
+    bitwiseArray.and(bitwiseArray2);
     const expectedValue = [2, 1];
     expect(bitwiseArray.value).toEqual(expectedValue);
   });

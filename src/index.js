@@ -88,7 +88,7 @@ class BitwiseArray {
     return Boolean(this.value[segNum] & mask); // eslint-disable-line no-bitwise
   }
 
-  add(bitwiseArray: BitwiseArray) {
+  and(bitwiseArray: BitwiseArray) {
     if (bitwiseArray.length !== this.length) {
       throw new TypeError('Length of two bitwiseArrays have to be equal!');
     }

@@ -3,7 +3,7 @@
 
 import { createBitwiseArray } from './index';
 
-describe('add BitwiseArray method', () => {
+describe('or BitwiseArray method', () => {
   test('should return bitwise OR of 2 bitwiseArrays', () => {
     const bitwiseArray = createBitwiseArray(62);
     bitwiseArray.set(0);

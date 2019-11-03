@@ -57,4 +57,12 @@ describe('createBitwiseArray util', () => {
     expect(colors.length).toBe(result.length);
     expect(result.toString()).toBe('0101010');
   });
+
+  test('should return array with 1 selected item', () => {
+    const days = ['', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const selectorDays = [''];
+    const result = createBitwiseArray(selectorDays, days);
+    expect(days.length).toBe(result.length);
+    expect(result.toString()).toBe('10000000');
+  });
 });

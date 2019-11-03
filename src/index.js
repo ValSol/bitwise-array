@@ -21,10 +21,8 @@ class BitwiseArray {
         if (pos === -1) {
           throw new TypeError('Second arg has to be an item of the first arg array!');
         }
-        if (pos) {
-          const { mask, segNum } = this.getMask(pos);
-          this.value[segNum] |= mask; // eslint-disable-line no-bitwise
-        }
+        const { mask, segNum } = this.getMask(pos);
+        this.value[segNum] |= mask; // eslint-disable-line no-bitwise
       });
     } else {
       this.length = arg;

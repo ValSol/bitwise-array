@@ -8,7 +8,7 @@ describe('toggle BitwiseArray method', () => {
     const bitwiseArray = createBitwiseArray(62);
     bitwiseArray.toggle(0);
     bitwiseArray.toggle(0);
-    const expectedValue = [0, 0];
+    const expectedValue = new ArrayBuffer(8);
     expect(bitwiseArray.value).toEqual(expectedValue);
   });
 
@@ -17,8 +17,9 @@ describe('toggle BitwiseArray method', () => {
     bitwiseArray.toggle(0);
     bitwiseArray.toggle(2);
     bitwiseArray.toggle(2);
-    const expectedValue = [1, 0];
-    expect(bitwiseArray.value).toEqual(expectedValue);
+    expect(bitwiseArray.toString()).toEqual(
+      '10000000000000000000000000000000000000000000000000000000000000',
+    );
   });
 
   test('should toggle 30-th & 32-th bit', () => {
@@ -26,7 +27,8 @@ describe('toggle BitwiseArray method', () => {
     bitwiseArray.toggle(30);
     bitwiseArray.toggle(32);
     bitwiseArray.toggle(32);
-    const expectedValue = [2 ** 30, 0];
-    expect(bitwiseArray.value).toEqual(expectedValue);
+    expect(bitwiseArray.toString()).toEqual(
+      '00000000000000000000000000000010000000000000000000000000000000',
+    );
   });
 });

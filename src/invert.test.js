@@ -9,7 +9,6 @@ describe('invert BitwiseArray method', () => {
     bitwiseArray.invert();
     const expectedString = '11111111111111111111111111111111111';
     expect(bitwiseArray.toString()).toEqual(expectedString);
-    expect(bitwiseArray.value[1]).toEqual(7);
   });
 
   test('should return invert BitwiseArray', () => {
@@ -21,5 +20,14 @@ describe('invert BitwiseArray method', () => {
     bitwiseArray.invert();
     const expectedString = '00111111111111111111111111111110110';
     expect(bitwiseArray.toString()).toEqual(expectedString);
+  });
+
+  test('should return invert empty BitwiseArray', () => {
+    const bitwiseArray = createBitwiseArray(3);
+    bitwiseArray.invert();
+    const expectedString = '111';
+    expect(bitwiseArray.toString()).toBe(expectedString);
+    const expectView = 7;
+    expect(bitwiseArray.view[0]).toEqual(expectView);
   });
 });

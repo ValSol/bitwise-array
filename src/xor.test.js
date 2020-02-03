@@ -12,7 +12,6 @@ describe('xor BitwiseArray method', () => {
     bitwiseArray2.set(1);
     bitwiseArray2.set(3);
     bitwiseArray.xor(bitwiseArray2);
-    const expectedValue = [6];
-    expect(bitwiseArray.value).toEqual(expectedValue);
+    expect(bitwiseArray.toString()).toEqual('0110');
   });
 });

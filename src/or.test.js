@@ -16,7 +16,8 @@ describe('or BitwiseArray method', () => {
     bitwiseArray2.set(32);
     bitwiseArray2.set(33);
     bitwiseArray.or(bitwiseArray2);
-    const expectedValue = [7, 11];
-    expect(bitwiseArray.value).toEqual(expectedValue);
+    expect(bitwiseArray.toString()).toEqual(
+      '11100000000000000000000000000000110100000000000000000000000000',
+    );
   });
 });

@@ -15,8 +15,8 @@ describe('isEqual BitwiseArray method', () => {
     const bitwiseArray = createBitwiseArray(2);
     bitwiseArray.set(0);
     const bitwiseArray2 = createBitwiseArray(2);
-    bitwiseArray.set(1);
-    bitwiseArray.invert();
+    bitwiseArray2.set(1);
+    bitwiseArray2.invert();
     const result = bitwiseArray.isEqual(bitwiseArray2);
     expect(result).toBe(true);
   });

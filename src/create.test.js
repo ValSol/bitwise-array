@@ -7,35 +7,35 @@ describe('createBitwiseArray util', () => {
   test('should create BitwiseArray class with length 1', () => {
     const length = 1;
     const result = createBitwiseArray(length);
-    const expectedValue = [0];
+    const expectedValue = new ArrayBuffer(1);
     expect(result.value).toEqual(expectedValue);
   });
 
   test('should create BitwiseArray class with length 32', () => {
     const length = 32;
     const result = createBitwiseArray(length);
-    const expectedValue = [0];
+    const expectedValue = new ArrayBuffer(4);
     expect(result.value).toEqual(expectedValue);
   });
 
   test('should create BitwiseArray class with length 33', () => {
     const length = 33;
     const result = createBitwiseArray(length);
-    const expectedValue = [0, 0];
+    const expectedValue = new ArrayBuffer(5);
     expect(result.value).toEqual(expectedValue);
   });
 
   test('should create BitwiseArray class with length 64', () => {
     const length = 64;
     const result = createBitwiseArray(length);
-    const expectedValue = [0, 0];
+    const expectedValue = new ArrayBuffer(8);
     expect(result.value).toEqual(expectedValue);
   });
 
   test('should create BitwiseArray class with length 65', () => {
     const length = 65;
     const result = createBitwiseArray(length);
-    const expectedValue = [0, 0, 0];
+    const expectedValue = new ArrayBuffer(9);
     expect(result.value).toEqual(expectedValue);
   });
 

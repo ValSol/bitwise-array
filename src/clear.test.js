@@ -11,7 +11,7 @@ describe('clear BitwiseArray method', () => {
     bitwiseArray.set(32);
     bitwiseArray.set(35);
     bitwiseArray.clear();
-    const expectedValue = [0, 0];
+    const expectedValue = new ArrayBuffer(8);
     expect(bitwiseArray.value).toEqual(expectedValue);
   });
 });

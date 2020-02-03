@@ -18,7 +18,8 @@ describe('and BitwiseArray method', () => {
       .set(32)
       .set(33);
     bitwiseArray.and(bitwiseArray2);
-    const expectedValue = [2, 1];
-    expect(bitwiseArray.value).toEqual(expectedValue);
+    expect(bitwiseArray.toString()).toEqual(
+      '01000000000000000000000000000000100000000000000000000000000000',
+    );
   });
 });

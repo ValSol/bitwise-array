@@ -1,25 +1,29 @@
 // @flow
 
+const DIMENSION = 32;
+// if DIMENSION = 32 use Uint32Array; 16 use Uint16Array; 8 use Uint8Array
+
 const transfer = (source: ArrayBuffer): ArrayBuffer => {
   const { byteLength } = source;
-  const sourceView = new Uint8Array(source);
-  const destView = new Uint8Array(new ArrayBuffer(byteLength));
+  const sourceView = new Uint32Array(source);
+  const destView = new Uint32Array(new ArrayBuffer(byteLength));
   destView.set(sourceView);
   return destView.buffer;
 };
 
-const create = (length: number): ArrayBuffer => new ArrayBuffer(Math.ceil(length / 8));
+const create = (length: number): ArrayBuffer =>
+  new ArrayBuffer((Math.ceil(length / DIMENSION) * DIMENSION) / 8);
 
 class BitwiseArray {
   length: number;
   value: ArrayBuffer;
-  view: Uint8Array;
+  view: Uint32Array;
 
   constructor<T>(arg: number | BitwiseArray | Array<T>, arg2?: Array<T>) {
     if (arg instanceof BitwiseArray) {
       this.length = arg.length;
       this.value = transfer(arg.value);
-      this.view = new Uint8Array(this.value);
+      this.view = new Uint32Array(this.value);
     } else if (Array.isArray(arg)) {
       // TODO interchange 'arg' & 'arg2'
       if (!Array.isArray(arg2)) {
@@ -27,7 +31,7 @@ class BitwiseArray {
       }
       this.length = arg2.length;
       this.value = create(this.length);
-      this.view = new Uint8Array(this.value);
+      this.view = new Uint32Array(this.value);
 
       arg.forEach(item => {
         const pos = arg2.indexOf(item);
@@ -40,13 +44,13 @@ class BitwiseArray {
     } else {
       this.length = arg;
       this.value = create(this.length);
-      this.view = new Uint8Array(this.value);
+      this.view = new Uint32Array(this.value);
     }
   }
 
   clear() {
     this.value = create(this.length);
-    this.view = new Uint8Array(this.value);
+    this.view = new Uint32Array(this.value);
     return this;
   }
 
@@ -58,8 +62,8 @@ class BitwiseArray {
       throw new TypeError(`Incorrect pos: "${pos}"!`);
     }
 
-    const segNum = Math.floor(pos / 8);
-    const mask = 1 << pos % 8; // eslint-disable-line no-bitwise
+    const segNum = Math.floor(pos / DIMENSION);
+    const mask = 2 ** (DIMENSION - (pos % DIMENSION) - 1); // eslint-disable-line no-bitwise
     return { mask, segNum };
   }
 
@@ -70,17 +74,18 @@ class BitwiseArray {
   }
 
   toString(): string {
-    const reminder = this.length % 8;
+    const reminder = this.length % DIMENSION;
+    const leftmostBit = 2 ** (DIMENSION - 1);
     return this.view.reduce((prev, segment, i) => {
-      let count = i === this.view.length - 1 && reminder ? reminder : 8;
+      let count = i === this.view.length - 1 && reminder ? reminder : DIMENSION;
       while (count) {
         // eslint-disable-next-line no-bitwise
-        if (segment & 1) {
+        if (segment & leftmostBit) {
           prev += '1'; // eslint-disable-line no-param-reassign
         } else {
           prev += '0'; // eslint-disable-line no-param-reassign
         }
-        segment >>= 1; // eslint-disable-line no-bitwise, no-param-reassign
+        segment <<= 1; // eslint-disable-line no-bitwise, no-param-reassign
         count -= 1;
       }
       return prev;
@@ -88,18 +93,18 @@ class BitwiseArray {
   }
 
   invert() {
-    const reminder = this.length % 8;
+    const reminder = this.length % DIMENSION;
     this.view = this.view.reduce((prev, segment, i) => {
       if (i < this.view.length - 1 || reminder === 0) {
         prev[i] = ~segment;
       } else {
-        const lastSegment = ~segment & (2 ** reminder - 1);
+        const lastSegment = ~segment & (2 ** DIMENSION - 2 ** (DIMENSION - reminder));
 
         prev[i] = lastSegment;
       }
 
       return prev;
-    }, new Uint8Array(create(this.length)));
+    }, new Uint32Array(create(this.length)));
     return this;
   }
 
@@ -152,7 +157,7 @@ class BitwiseArray {
 
   count() {
     return this.view.reduce((prev, segment) => {
-      let count = 8; // use 'count' for case 8th bit set
+      let count = DIMENSION; // use 'count' for case 8th bit set
       while (segment && count) {
         // eslint-disable-next-line no-bitwise
         if (segment & 1) {
@@ -170,13 +175,14 @@ class BitwiseArray {
 
   select<T>(arr: Array<T>): Array<T> {
     let index = 0;
+    const leftmostBit = 2 ** (DIMENSION - 1);
     return this.view.reduce((prev, segment, i) => {
-      while (index < 8 * (i + 1) && index < this.length) {
+      while (index < DIMENSION * (i + 1) && index < this.length) {
         // eslint-disable-next-line no-bitwise
-        if (segment & 1) {
+        if (segment & leftmostBit) {
           prev.push(arr[index]);
         }
-        segment >>= 1; // eslint-disable-line no-bitwise, no-param-reassign
+        segment <<= 1; // eslint-disable-line no-bitwise, no-param-reassign
         index += 1;
       }
       return prev;

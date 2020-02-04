@@ -12,6 +12,7 @@
     "flow": "flow check",
     "test:once": "jest",
     "test": "jest --watch",
+    "test:one": "jest src/invert.test.js",
     "semantic-release": "semantic-release"
   },
   "repository": {

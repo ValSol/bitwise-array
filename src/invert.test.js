@@ -27,7 +27,7 @@ describe('invert BitwiseArray method', () => {
     bitwiseArray.invert();
     const expectedString = '111';
     expect(bitwiseArray.toString()).toBe(expectedString);
-    const expectView = 7;
+    const expectView = 2 ** 31 + 2 ** 30 + 2 ** 29;
     expect(bitwiseArray.view[0]).toEqual(expectView);
   });
 });

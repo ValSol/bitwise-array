@@ -3,12 +3,12 @@
 const DIMENSION = 32;
 // if DIMENSION = 32 use Uint32Array; 16 use Uint16Array; 8 use Uint8Array
 
-const transfer = (source: ArrayBuffer): ArrayBuffer => {
+const transfer = (source: ArrayBuffer): { buffer: ArrayBuffer, view: Uint32Array } => {
   const { byteLength } = source;
   const sourceView = new Uint32Array(source);
   const destView = new Uint32Array(new ArrayBuffer(byteLength));
   destView.set(sourceView);
-  return destView.buffer;
+  return { buffer: destView.buffer, view: destView };
 };
 
 const create = (length: number): ArrayBuffer =>
@@ -19,13 +19,34 @@ class BitwiseArray {
   buffer: ArrayBuffer;
   view: Uint32Array;
 
-  constructor<T>(arg: number | string | BitwiseArray | Array<T>, arg2?: Array<T>) {
+  constructor<T>(
+    arg: number | string | BitwiseArray | ArrayBuffer | Array<T>,
+    arg2?: Array<T> | number,
+  ) {
     if (arg instanceof BitwiseArray) {
       this.length = arg.length;
-      this.buffer = transfer(arg.buffer);
+      const { buffer, view } = transfer(arg.buffer);
+      this.buffer = buffer;
+      this.view = view;
+    } else if (arg instanceof ArrayBuffer) {
+      if (typeof arg2 !== 'number') {
+        throw new TypeError(
+          'If first arg is ArrayBuffer second arg has to be length with type Number',
+        );
+      }
+
+      const { byteLength } = arg;
+      if (byteLength * 8 < arg2) {
+        throw new TypeError('Too long "length" for this "ArrayBuffer"!');
+      }
+      if (byteLength * 8 - arg2 > 31) {
+        throw new TypeError('Too short "length" for this "ArrayBuffer"!');
+      }
+
+      this.buffer = arg;
+      this.length = arg2;
       this.view = new Uint32Array(this.buffer);
     } else if (Array.isArray(arg)) {
-      // TODO interchange 'arg' & 'arg2'
       if (!Array.isArray(arg2)) {
         throw new TypeError('Second arg has to be Array!');
       }
@@ -58,12 +79,12 @@ class BitwiseArray {
       this.buffer = create(this.length);
       this.view = new Uint32Array(this.buffer);
     }
+    Object.freeze(this);
   }
 
   clear() {
-    this.buffer = create(this.length);
-    this.view = new Uint32Array(this.buffer);
-    return this;
+    const buffer = create(this.length);
+    return new BitwiseArray(buffer, this.length);
   }
 
   getMask(pos: number): { mask: number, segNum: number } {
@@ -81,8 +102,9 @@ class BitwiseArray {
 
   set(pos: number) {
     const { mask, segNum } = this.getMask(pos);
-    this.view[segNum] |= mask; // eslint-disable-line no-bitwise
-    return this;
+    const { buffer, view } = transfer(this.buffer);
+    view[segNum] |= mask; // eslint-disable-line no-bitwise
+    return new BitwiseArray(buffer, this.length);
   }
 
   toString(): string {
@@ -106,30 +128,33 @@ class BitwiseArray {
 
   invert() {
     const reminder = this.length % DIMENSION;
-    this.view = this.view.reduce((prev, segment, i) => {
+    const buffer = create(this.length);
+    const view = new Uint32Array(buffer);
+    this.view.forEach((segment, i) => {
       if (i < this.view.length - 1 || reminder === 0) {
-        prev[i] = ~segment;
+        view[i] = ~segment;
       } else {
         const lastSegment = ~segment & (2 ** DIMENSION - 2 ** (DIMENSION - reminder));
 
-        prev[i] = lastSegment;
+        view[i] = lastSegment;
       }
+    });
 
-      return prev;
-    }, new Uint32Array(create(this.length)));
-    return this;
+    return new BitwiseArray(buffer, this.length);
   }
 
   toggle(pos: number) {
     const { mask, segNum } = this.getMask(pos);
-    this.view[segNum] ^= mask; // eslint-disable-line no-bitwise
-    return this;
+    const { buffer, view } = transfer(this.buffer);
+    view[segNum] ^= mask; // eslint-disable-line no-bitwise
+    return new BitwiseArray(buffer, this.length);
   }
 
   unset(pos: number) {
     const { mask, segNum } = this.getMask(pos);
-    this.view[segNum] &= ~mask; // eslint-disable-line no-bitwise
-    return this;
+    const { buffer, view } = transfer(this.buffer);
+    view[segNum] &= ~mask; // eslint-disable-line no-bitwise
+    return new BitwiseArray(buffer, this.length);
   }
 
   get(pos: number): boolean {
@@ -141,30 +166,33 @@ class BitwiseArray {
     if (bitwiseArray.length !== this.length) {
       throw new TypeError('Length of two bitwiseArrays have to be equal!');
     }
+    const { buffer, view } = transfer(this.buffer);
     bitwiseArray.view.forEach((segment, i) => {
-      this.view[i] &= segment; // eslint-disable-line no-bitwise
+      view[i] &= segment; // eslint-disable-line no-bitwise
     });
-    return this;
+    return new BitwiseArray(buffer, this.length);
   }
 
   or(bitwiseArray: BitwiseArray) {
     if (bitwiseArray.length !== this.length) {
       throw new TypeError('Length of two bitwiseArrays have to be equal!');
     }
+    const { buffer, view } = transfer(this.buffer);
     bitwiseArray.view.forEach((segment, i) => {
-      this.view[i] |= segment; // eslint-disable-line no-bitwise
+      view[i] |= segment; // eslint-disable-line no-bitwise
     });
-    return this;
+    return new BitwiseArray(buffer, this.length);
   }
 
   xor(bitwiseArray: BitwiseArray) {
     if (bitwiseArray.length !== this.length) {
       throw new TypeError('Length of two bitwiseArrays have to be equal!');
     }
+    const { buffer, view } = transfer(this.buffer);
     bitwiseArray.view.forEach((segment, i) => {
-      this.view[i] ^= segment; // eslint-disable-line no-bitwise
+      view[i] ^= segment; // eslint-disable-line no-bitwise
     });
-    return this;
+    return new BitwiseArray(buffer, this.length);
   }
 
   count() {
@@ -224,8 +252,8 @@ class BitwiseArray {
 }
 
 function createBitwiseArray<T>(
-  arg: number | string | BitwiseArray | Array<T>,
-  arg2?: Array<T>,
+  arg: number | string | BitwiseArray | ArrayBuffer | Array<T>,
+  arg2?: number | Array<T>,
 ): BitwiseArray {
   return new BitwiseArray(arg, arg2);
 }

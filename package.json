@@ -1,7 +1,7 @@
 {
   "name": "bitwise-array",
-  "version": "0.0.5",
-  "description": "Class that represents bitwise array",
+  "version": "0.1.0",
+  "description": "Class that represents immutable bitwise array",
   "main": "lib/index.js",
   "scripts": {
     "build": "yarn build:clean && yarn build:lib && yarn build:flow",
@@ -12,7 +12,7 @@
     "flow": "flow check",
     "test:once": "jest",
     "test": "jest --watch",
-    "test:one": "jest src/invert.test.js",
+    "test:one": "jest src/xor.test.js",
     "semantic-release": "semantic-release"
   },
   "repository": {

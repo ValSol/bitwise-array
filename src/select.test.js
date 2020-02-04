@@ -13,7 +13,10 @@ describe('select BitwiseArray method', () => {
   });
 
   test('should return array with 3 selected items', () => {
-    const bitwiseArray = createBitwiseArray(33);
+    const bitwiseArray = createBitwiseArray(33)
+      .set(0)
+      .set(31)
+      .set(32);
     const arr = [
       0,
       1,
@@ -50,16 +53,18 @@ describe('select BitwiseArray method', () => {
       32,
       33,
     ];
-    bitwiseArray.set(0);
-    bitwiseArray.set(31);
-    bitwiseArray.set(32);
     const result = bitwiseArray.select(arr);
     const expectedResult = [0, 31, 32];
     expect(result).toEqual(expectedResult);
   });
 
   test('should return array with 3 selected items', () => {
-    const bitwiseArray = createBitwiseArray(33);
+    const bitwiseArray = createBitwiseArray(33)
+      .set(2)
+      .set(4)
+      .set(8)
+      .set(16)
+      .set(32);
     const arr = [
       0,
       1,
@@ -96,11 +101,6 @@ describe('select BitwiseArray method', () => {
       32,
       33,
     ];
-    bitwiseArray.set(2);
-    bitwiseArray.set(4);
-    bitwiseArray.set(8);
-    bitwiseArray.set(16);
-    bitwiseArray.set(32);
     const result = bitwiseArray.select(arr);
     const expectedResult = [2, 4, 8, 16, 32];
     expect(result).toEqual(expectedResult);

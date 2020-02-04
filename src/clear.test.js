@@ -6,12 +6,13 @@ import { createBitwiseArray } from './index';
 describe('clear BitwiseArray method', () => {
   test('should return clear BitwiseArray', () => {
     const bitwiseArray = createBitwiseArray(62);
-    bitwiseArray.set(0);
-    bitwiseArray.set(1);
-    bitwiseArray.set(32);
-    bitwiseArray.set(35);
-    bitwiseArray.clear();
-    const expectedValue = new ArrayBuffer(8);
-    expect(bitwiseArray.buffer).toEqual(expectedValue);
+    const result = bitwiseArray
+      .set(0)
+      .set(1)
+      .set(32)
+      .set(35)
+      .clear();
+    const expectedBuffer = new ArrayBuffer(8);
+    expect(result.buffer).toEqual(expectedBuffer);
   });
 });

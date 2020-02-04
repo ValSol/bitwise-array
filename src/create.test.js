@@ -7,36 +7,36 @@ describe('createBitwiseArray util', () => {
   test('should create BitwiseArray class with length 1', () => {
     const length = 1;
     const result = createBitwiseArray(length);
-    const expectedValue = new ArrayBuffer(1);
-    expect(result.buffer).toEqual(expectedValue);
+    const expectedBuffer = new ArrayBuffer(1);
+    expect(result.buffer).toEqual(expectedBuffer);
   });
 
   test('should create BitwiseArray class with length 32', () => {
     const length = 32;
     const result = createBitwiseArray(length);
-    const expectedValue = new ArrayBuffer(4);
-    expect(result.buffer).toEqual(expectedValue);
+    const expectedBuffer = new ArrayBuffer(4);
+    expect(result.buffer).toEqual(expectedBuffer);
   });
 
   test('should create BitwiseArray class with length 33', () => {
     const length = 33;
     const result = createBitwiseArray(length);
-    const expectedValue = new ArrayBuffer(5);
-    expect(result.buffer).toEqual(expectedValue);
+    const expectedBuffer = new ArrayBuffer(5);
+    expect(result.buffer).toEqual(expectedBuffer);
   });
 
   test('should create BitwiseArray class with length 64', () => {
     const length = 64;
     const result = createBitwiseArray(length);
-    const expectedValue = new ArrayBuffer(8);
-    expect(result.buffer).toEqual(expectedValue);
+    const expectedBuffer = new ArrayBuffer(8);
+    expect(result.buffer).toEqual(expectedBuffer);
   });
 
   test('should create BitwiseArray class with length 65', () => {
     const length = 65;
     const result = createBitwiseArray(length);
-    const expectedValue = new ArrayBuffer(9);
-    expect(result.buffer).toEqual(expectedValue);
+    const expectedBuffer = new ArrayBuffer(9);
+    expect(result.buffer).toEqual(expectedBuffer);
   });
 
   test('should create BitwiseArray class from BitwiseArray class', () => {
@@ -71,6 +71,14 @@ describe('createBitwiseArray util', () => {
   test('should create BitwiseArray class from string', () => {
     const bitString = '001101010011';
     const result = createBitwiseArray(bitString);
+    expect(result.length).toEqual(bitString.length);
+    expect(result.toString()).toEqual(bitString);
+  });
+
+  test('should create BitwiseArray class from ArrayBuffer', () => {
+    const bitString = '001101010011';
+    const buffer = createBitwiseArray(bitString).buffer;
+    const result = createBitwiseArray(buffer, bitString.length);
     expect(result.length).toEqual(bitString.length);
     expect(result.toString()).toEqual(bitString);
   });

@@ -16,41 +16,53 @@ const create = (length: number): ArrayBuffer =>
 
 class BitwiseArray {
   length: number;
-  value: ArrayBuffer;
+  buffer: ArrayBuffer;
   view: Uint32Array;
 
-  constructor<T>(arg: number | BitwiseArray | Array<T>, arg2?: Array<T>) {
+  constructor<T>(arg: number | string | BitwiseArray | Array<T>, arg2?: Array<T>) {
     if (arg instanceof BitwiseArray) {
       this.length = arg.length;
-      this.value = transfer(arg.value);
-      this.view = new Uint32Array(this.value);
+      this.buffer = transfer(arg.buffer);
+      this.view = new Uint32Array(this.buffer);
     } else if (Array.isArray(arg)) {
       // TODO interchange 'arg' & 'arg2'
       if (!Array.isArray(arg2)) {
         throw new TypeError('Second arg has to be Array!');
       }
-      this.length = arg2.length;
-      this.value = create(this.length);
-      this.view = new Uint32Array(this.value);
+      this.length = arg.length;
+      this.buffer = create(this.length);
+      this.view = new Uint32Array(this.buffer);
 
-      arg.forEach(item => {
-        const pos = arg2.indexOf(item);
+      arg2.forEach(item => {
+        const pos = arg.indexOf(item);
         if (pos === -1) {
           throw new TypeError('Second arg has to be an item of the first arg array!');
         }
         const { mask, segNum } = this.getMask(pos);
         this.view[segNum] |= mask; // eslint-disable-line no-bitwise
       });
+    } else if (typeof arg === 'string') {
+      this.length = arg.length;
+      this.buffer = create(this.length);
+      this.view = new Uint32Array(this.buffer);
+      for (let i = 0; i < this.length; i += 1) {
+        if (arg[i] === '1') {
+          const { mask, segNum } = this.getMask(i);
+          this.view[segNum] |= mask;
+        } else if (arg[i] !== '0') {
+          throw new TypeError('Bit string should have only "0" or "1" symbols');
+        }
+      }
     } else {
       this.length = arg;
-      this.value = create(this.length);
-      this.view = new Uint32Array(this.value);
+      this.buffer = create(this.length);
+      this.view = new Uint32Array(this.buffer);
     }
   }
 
   clear() {
-    this.value = create(this.length);
-    this.view = new Uint32Array(this.value);
+    this.buffer = create(this.length);
+    this.view = new Uint32Array(this.buffer);
     return this;
   }
 
@@ -212,7 +224,7 @@ class BitwiseArray {
 }
 
 function createBitwiseArray<T>(
-  arg: number | BitwiseArray | Array<T>,
+  arg: number | string | BitwiseArray | Array<T>,
   arg2?: Array<T>,
 ): BitwiseArray {
   return new BitwiseArray(arg, arg2);

@@ -50,9 +50,12 @@ b.toString(); // '01000'
 
 const colors = ['RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'];
 const selectedColors = ['GREEN', 'INDIGO', 'ORANGE'];
-// with 1st arg: selected items array, 2nd arg: all items array
-const c = createBitwiseArray(selectedColors, colors);
+// with 1st arg: all items array, 2nd arg: selected items array
+const c = createBitwiseArray(colors, selectedColors);
 c.toString(); // '0101010'
+
+const d = createBitwiseArray('010011'); // with '0s & 1s" string
+d.toString(); // '010011'
 ```
 
 or
@@ -68,9 +71,12 @@ b.toString(); // '01000'
 
 const colors = ['RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'];
 const selectedColors = ['GREEN', 'INDIGO', 'ORANGE'];
-// with 1st arg: selected items array, 2nd arg: all items array
-const c = new BitwiseArray(selectedColors, colors);
+// with 1st arg: all items array, 2nd arg: selected items array
+const c = new BitwiseArray(colors, selectedColors);
 c.toString(); // '0101010'
+
+const d = new BitwiseArray('010011'); // with '0s & 1s" string
+d.toString(); // '010011'
 ```
 
 ## API
@@ -84,7 +90,7 @@ Example:
 ```javascript
 const colors = ['RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'];
 const selectedColors = ['GREEN', 'INDIGO', 'ORANGE'];
-const c = createBitwiseArray(selectedColors, colors);
+const c = createBitwiseArray(colors, selectedColors);
 c.length; // 7
 ```
 

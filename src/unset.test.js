@@ -9,7 +9,7 @@ describe('unset BitwiseArray method', () => {
     bitwiseArray.set(0);
     bitwiseArray.unset(0);
     const expectedValue = new ArrayBuffer(8);
-    expect(bitwiseArray.value).toEqual(expectedValue);
+    expect(bitwiseArray.buffer).toEqual(expectedValue);
   });
 
   test('should unset 2-th bit', () => {

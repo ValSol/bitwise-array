@@ -9,7 +9,7 @@ describe('toggle BitwiseArray method', () => {
     bitwiseArray.toggle(0);
     bitwiseArray.toggle(0);
     const expectedValue = new ArrayBuffer(8);
-    expect(bitwiseArray.value).toEqual(expectedValue);
+    expect(bitwiseArray.buffer).toEqual(expectedValue);
   });
 
   test('should toggle 2-th bit', () => {

@@ -1,6 +1,6 @@
 ## JavaScript Bitwise Array Class
 
-The Immutable Class supports operations:
+The **Immutable** Class supports operations:
 
 - getting, setting, unsetting and toggling of individual bits
 - bitwise operations with other bitwise array such as OR, XOR and AND
@@ -265,38 +265,6 @@ b.set(3);
 b.toString(); // '10110'
 
 a.isEqual(b); // false
-```
-
-#### isIntersected(secondBitwiseArray: BitwiseArray): boolean
-
-Example:
-
-```javascript
-const a = createBitwiseArray(5);
-a.set(0).set(2);
-a.toString(); // '10100'
-const b = createBitwiseArray(5);
-b.set(2).set(3);
-b.toString(); // '00110'
-
-a.isIntersected(b); // true
-
-b.unset(2);
-b.toString(); // '00010'
-
-a.isIntersected(b); // false
-```
-
-**take notice!**: if all bits of a **first** BitwaseArray are unset always return true
-
-```javascript
-const a = createBitwiseArray(5);
-a.toString(); // '00000'
-const b = createBitwiseArray(5);
-b.set(2).set(3);
-b.toString(); // '00110'
-
-a.isIntersected(b); // true
 ```
 
 #### select(arr: Array<T>): Array<T>

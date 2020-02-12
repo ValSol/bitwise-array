@@ -229,18 +229,6 @@ class BitwiseArray {
     }, []);
   }
 
-  isIntersected(bitwiseArray: BitwiseArray): boolean {
-    if (bitwiseArray.length !== this.length) {
-      throw new TypeError('Length of two bitwiseArrays have to be equal!');
-    }
-    return (
-      this.view.every(segment => segment === 0) ||
-      bitwiseArray.view.some(
-        (segment, i) => (this.view[i] & segment) !== 0, // eslint-disable-line no-bitwise
-      )
-    );
-  }
-
   isEqual(bitwiseArray: BitwiseArray): boolean {
     if (bitwiseArray.length !== this.length) {
       throw new TypeError('Length of two bitwiseArrays have to be equal!');

@@ -91,15 +91,15 @@ describe('createBitwiseArray util', () => {
     expect(result.toString()).toEqual(bitString);
   });
 
-  // test('should create BitwiseArray class from  radix32 string & length for long bit arrays', () => {
-  //   let bitString = '1';
-  //   for (let i = 0; i < 60; i += 1) {
-  //     const length = bitString.length;
-  //     const bitwiseArray = createBitwiseArray(bitString);
-  //     const radix32String = bitwiseArray.toString(32);
-  //     const result = createBitwiseArray(radix32String, length);
-  //     expect(result).toEqual(bitwiseArray);
-  //     bitString += '1';
-  //   }
-  // });
+  test('should create BitwiseArray class from  radix32 string & length for long bit arrays', () => {
+    let bitString = '001';
+    for (let i = 0; i < 60; i += 1) {
+      const length = bitString.length;
+      const bitwiseArray = createBitwiseArray(bitString);
+      const radix32String = bitwiseArray.toString(32);
+      const result = createBitwiseArray(radix32String, length);
+      expect(result).toEqual(bitwiseArray);
+      bitString += '1';
+    }
+  });
 });

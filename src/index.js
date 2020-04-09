@@ -107,9 +107,9 @@ class BitwiseArray {
 
       const reminder = parseInt(head, 32).toString(2);
       const bitString =
-        reminder.length < lengthReminder
-          ? `${zeros50.slice(-lengthReminder + reminder.length)}${reminder}${tail}`
-          : `${reminder}${tail}`;
+        reminder.length === lengthReminder
+          ? `${reminder}${tail}`
+          : `${zeros50.slice(-lengthReminder + reminder.length)}${reminder}${tail}`;
 
       this.view = new Uint32Array(this.buffer);
       for (let i = 0; i < this.length; i += 1) {

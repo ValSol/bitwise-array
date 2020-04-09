@@ -98,7 +98,9 @@ class BitwiseArray {
 
       const lengthReminder = this.length % 50;
 
-      let head = arg;
+      const length32 = Math.ceil(this.length / 5);
+
+      let head = length32 === arg.length ? arg : `${zeros50.slice(-length32 + arg.length)}${arg}`;
       let tail = '';
       while (head.length > 10) {
         tail = `${bitsFrom32(head.slice(-10))}${tail}`;

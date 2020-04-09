@@ -75,6 +75,14 @@ describe('createBitwiseArray util', () => {
     expect(result.toString()).toEqual(bitString);
   });
 
+  test('should create BitwiseArray class from radix32 string & length', () => {
+    const radix32String = 'qj'; // parseInt('001101010011', 2)
+    const length = 12;
+    const result = createBitwiseArray(radix32String, length);
+    expect(result.length).toEqual(length);
+    expect(result.toString()).toEqual('001101010011');
+  });
+
   test('should create BitwiseArray class from ArrayBuffer', () => {
     const bitString = '001101010011';
     const buffer = createBitwiseArray(bitString).buffer;
@@ -82,4 +90,16 @@ describe('createBitwiseArray util', () => {
     expect(result.length).toEqual(bitString.length);
     expect(result.toString()).toEqual(bitString);
   });
+
+  // test('should create BitwiseArray class from  radix32 string & length for long bit arrays', () => {
+  //   let bitString = '1';
+  //   for (let i = 0; i < 60; i += 1) {
+  //     const length = bitString.length;
+  //     const bitwiseArray = createBitwiseArray(bitString);
+  //     const radix32String = bitwiseArray.toString(32);
+  //     const result = createBitwiseArray(radix32String, length);
+  //     expect(result).toEqual(bitwiseArray);
+  //     bitString += '1';
+  //   }
+  // });
 });

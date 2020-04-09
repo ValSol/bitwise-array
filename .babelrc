@@ -1,4 +1,14 @@
 {
-  "presets": [["@babel/preset-env", { "targets": { "node": "current" } }], "minify"],
+  "presets": [
+    ["@babel/preset-env", { "targets": { "node": "current" } }],
+    [
+      "minify",
+      {
+        "builtIns": false,
+        "evaluate": false,
+        "mangle": false
+      }
+    ]
+  ],
   "plugins": ["@babel/plugin-proposal-class-properties", "transform-flow-strip-types"]
 }

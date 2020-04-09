@@ -1,5 +1,8 @@
 // @flow
 
+import codeZeros from './codeZeros';
+import uncodeZeros from './uncodeZeros';
+
 const DIMENSION = 32;
 // if DIMENSION = 32 use Uint32Array; 16 use Uint16Array; 8 use Uint8Array
 
@@ -9,6 +12,28 @@ const transfer = (source: ArrayBuffer): { buffer: ArrayBuffer, view: Uint32Array
   const destView = new Uint32Array(new ArrayBuffer(byteLength));
   destView.set(sourceView);
   return { buffer: destView.buffer, view: destView };
+};
+
+const zeros50 = '00000000000000000000000000000000000000000000000000';
+
+// only for 50bit numbers
+const bitsTo32 = (bits: string): string => {
+  let result = parseInt(bits, 2).toString(32);
+  if (result.length < 10) {
+    result = `${zeros50.slice(-10 + result.length)}${result}`;
+  }
+
+  return result;
+};
+
+// only for 50bit numbers (10symbols length 32 base numbers)
+const bitsFrom32 = (n32: string): string => {
+  let result = parseInt(n32, 32).toString(2);
+  if (result.length < 50) {
+    result = `${zeros50.slice(-50 + result.length)}${result}`;
+  }
+
+  return result;
 };
 
 const create = (length: number): ArrayBuffer =>
@@ -54,7 +79,7 @@ class BitwiseArray {
       this.buffer = create(this.length);
       this.view = new Uint32Array(this.buffer);
 
-      arg2.forEach(item => {
+      arg2.forEach((item) => {
         const pos = arg.indexOf(item);
         if (pos === -1) {
           throw new TypeError('Second arg has to be an item of the first arg array!');
@@ -62,6 +87,37 @@ class BitwiseArray {
         const { mask, segNum } = this.getMask(pos);
         this.view[segNum] |= mask; // eslint-disable-line no-bitwise
       });
+    } else if (typeof arg === 'string' && arg2) {
+      if (typeof arg2 !== 'number') {
+        throw new TypeError(
+          'If first arg is a String second arg has to be length with type Number',
+        );
+      }
+      this.length = arg2;
+      this.buffer = create(this.length);
+
+      const lengthReminder = this.length % 50;
+
+      let head = arg;
+      let tail = '';
+      while (head.length > 10) {
+        tail = `${bitsFrom32(head.slice(-10))}${tail}`;
+        head = head.slice(0, -10);
+      }
+
+      const reminder = parseInt(head, 32).toString(2);
+      const bitString =
+        reminder.length < lengthReminder
+          ? `${zeros50.slice(-lengthReminder + reminder.length)}${reminder}${tail}`
+          : `${reminder}${tail}`;
+
+      this.view = new Uint32Array(this.buffer);
+      for (let i = 0; i < this.length; i += 1) {
+        if (bitString[i] === '1') {
+          const { mask, segNum } = this.getMask(i);
+          this.view[segNum] |= mask;
+        }
+      }
     } else if (typeof arg === 'string') {
       this.length = arg.length;
       this.buffer = create(this.length);
@@ -107,10 +163,10 @@ class BitwiseArray {
     return new BitwiseArray(buffer, this.length);
   }
 
-  toString(): string {
+  toString(radix?: 32): string {
     const reminder = this.length % DIMENSION;
     const leftmostBit = 2 ** (DIMENSION - 1);
-    return this.view.reduce((prev, segment, i) => {
+    const result = this.view.reduce((prev, segment, i) => {
       let count = i === this.view.length - 1 && reminder ? reminder : DIMENSION;
       while (count) {
         // eslint-disable-next-line no-bitwise
@@ -124,6 +180,22 @@ class BitwiseArray {
       }
       return prev;
     }, '');
+
+    if (!radix) return result;
+
+    let head = result;
+    let tail = '';
+    while (head.length > 50) {
+      tail = `${bitsTo32(head.slice(-50))}${tail}`;
+      head = head.slice(0, -50);
+    }
+
+    let result2 = `${parseInt(head, 2).toString(32)}${tail}`;
+    while (result2.length > 1 && result2[0] === '0') {
+      result2 = result2.slice(1);
+    }
+
+    return result2;
   }
 
   invert() {
@@ -247,4 +319,4 @@ function createBitwiseArray<T>(
 }
 
 export default BitwiseArray;
-export { createBitwiseArray };
+export { createBitwiseArray, codeZeros, uncodeZeros };

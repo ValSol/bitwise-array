@@ -34,6 +34,7 @@ describe('toString BitwiseArray method', () => {
   });
 
   test('should return string with only 4 ones', () => {
+    const x: window.BigInt = window.BigInt(2 ** 100);
     const bitwiseArray = createBitwiseArray(60).set(59);
     const result = bitwiseArray.toString(32);
     const expectedResult = '1';

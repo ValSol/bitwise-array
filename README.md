@@ -56,11 +56,6 @@ c.toString(); // '0101010'
 
 const d = createBitwiseArray('010011'); // with '0s & 1s" string
 d.toString(); // '010011'
-
-const buffer = new ArrayBuffer(4); // byte lenght of buffer must be a multiple of four
-const length = 5;
-const e = createBitwiseArray(buffer, length); // with ArrayBuffer
-e.toString(); // '00000'
 ```
 
 or
@@ -82,11 +77,6 @@ c.toString(); // '0101010'
 
 const d = new BitwiseArray('010011'); // with '0s & 1s" string
 d.toString(); // '010011'
-
-const buffer = new ArrayBuffer(4); // byte lenght of buffer must be a multiple of four
-const length = 5;
-const e = new BitwiseArray(buffer, length); // with ArrayBuffer
-e.toString(); // '00000'
 ```
 
 ## API
@@ -273,9 +263,7 @@ Example:
 
 ```javascript
 const a = createBitwiseArray(7);
-a.set(1)
-  .set(3)
-  .set(5);
+a.set(1).set(3).set(5);
 a.toString(); // '0101010'
 const colors = ['RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'];
 

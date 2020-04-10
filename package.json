@@ -1,6 +1,6 @@
 {
   "name": "bitwise-array",
-  "version": "0.1.8",
+  "version": "0.1.10",
   "description": "Class that represents immutable bitwise array",
   "main": "lib/index.js",
   "scripts": {

@@ -86,6 +86,7 @@ describe('createBitwiseArray util', () => {
   test('should create BitwiseArray class from ArrayBuffer', () => {
     const bitString = '001101010011';
     const buffer = createBitwiseArray(bitString).buffer;
+    if (!buffer) throw new TypeError('Buffer have to be defined!'); // to prevent flowjs error
     const result = createBitwiseArray(buffer, bitString.length);
     expect(result.length).toEqual(bitString.length);
     expect(result.toString()).toEqual(bitString);

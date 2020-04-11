@@ -1,7 +1,11 @@
 // @flow
 
+import type { BitwiseArray } from '../flowTypes';
+
 const DIMENSION = 32;
 // if DIMENSION = 32 use Uint32Array; 16 use Uint16Array; 8 use Uint8Array
+
+const viewIsUndefinedMessage = 'BitwiseArray view undefined!';
 
 const transfer = (source: ArrayBuffer): { buffer: ArrayBuffer, view: Uint32Array } => {
   const { byteLength } = source;
@@ -36,7 +40,7 @@ const bitsFrom32 = (n32: string): string => {
 const create = (length: number): ArrayBuffer =>
   new ArrayBuffer((Math.ceil(length / DIMENSION) * DIMENSION) / 8);
 
-class BitwiseArray {
+class BitwiseArrayOnArrayBuffer {
   length: number;
   buffer: ArrayBuffer;
   view: Uint32Array;
@@ -44,8 +48,9 @@ class BitwiseArray {
   constructor<T>(
     arg: number | string | BitwiseArray | ArrayBuffer | Array<T>,
     arg2?: Array<T> | number,
+    // $FlowFixMe
   ) {
-    if (arg instanceof BitwiseArray) {
+    if (arg instanceof BitwiseArrayOnArrayBuffer) {
       this.length = arg.length;
       const { buffer, view } = transfer(arg.buffer);
       this.buffer = buffer;
@@ -129,17 +134,19 @@ class BitwiseArray {
           throw new TypeError('Bit string should have only "0" or "1" symbols');
         }
       }
-    } else {
+    } else if (typeof arg === 'number') {
       this.length = arg;
       this.buffer = create(this.length);
       this.view = new Uint32Array(this.buffer);
+    } else {
+      throw new TypeError(`Incorrect type of arg: "${String(arg)}" or arg2: ${String(arg2)}`);
     }
     Object.freeze(this);
   }
 
   clear() {
     const buffer = create(this.length);
-    return new BitwiseArray(buffer, this.length);
+    return new BitwiseArrayOnArrayBuffer(buffer, this.length);
   }
 
   getMask(pos: number): { mask: number, segNum: number } {
@@ -155,11 +162,17 @@ class BitwiseArray {
     return { mask, segNum };
   }
 
+  checkLength(bitwiseArray: BitwiseArray) {
+    if (bitwiseArray.length !== this.length) {
+      throw new TypeError('Length of two bitwiseArrays have to be equal!');
+    }
+  }
+
   set(pos: number) {
     const { mask, segNum } = this.getMask(pos);
     const { buffer, view } = transfer(this.buffer);
     view[segNum] |= mask; // eslint-disable-line no-bitwise
-    return new BitwiseArray(buffer, this.length);
+    return new BitwiseArrayOnArrayBuffer(buffer, this.length);
   }
 
   toString(radix?: 32): string {
@@ -211,21 +224,21 @@ class BitwiseArray {
       }
     });
 
-    return new BitwiseArray(buffer, this.length);
+    return new BitwiseArrayOnArrayBuffer(buffer, this.length);
   }
 
   toggle(pos: number) {
     const { mask, segNum } = this.getMask(pos);
     const { buffer, view } = transfer(this.buffer);
     view[segNum] ^= mask; // eslint-disable-line no-bitwise
-    return new BitwiseArray(buffer, this.length);
+    return new BitwiseArrayOnArrayBuffer(buffer, this.length);
   }
 
   unset(pos: number) {
     const { mask, segNum } = this.getMask(pos);
     const { buffer, view } = transfer(this.buffer);
     view[segNum] &= ~mask; // eslint-disable-line no-bitwise
-    return new BitwiseArray(buffer, this.length);
+    return new BitwiseArrayOnArrayBuffer(buffer, this.length);
   }
 
   get(pos: number): boolean {
@@ -234,36 +247,40 @@ class BitwiseArray {
   }
 
   and(bitwiseArray: BitwiseArray) {
-    if (bitwiseArray.length !== this.length) {
-      throw new TypeError('Length of two bitwiseArrays have to be equal!');
-    }
+    this.checkLength(bitwiseArray);
     const { buffer, view } = transfer(this.buffer);
+
+    if (!bitwiseArray.view) {
+      throw new TypeError(viewIsUndefinedMessage); // to prevent flowjs error
+    }
     bitwiseArray.view.forEach((segment, i) => {
       view[i] &= segment; // eslint-disable-line no-bitwise
     });
-    return new BitwiseArray(buffer, this.length);
+    return new BitwiseArrayOnArrayBuffer(buffer, this.length);
   }
 
   or(bitwiseArray: BitwiseArray) {
-    if (bitwiseArray.length !== this.length) {
-      throw new TypeError('Length of two bitwiseArrays have to be equal!');
-    }
+    this.checkLength(bitwiseArray);
     const { buffer, view } = transfer(this.buffer);
+    if (!bitwiseArray.view) {
+      throw new TypeError(viewIsUndefinedMessage); // to prevent flowjs error
+    }
     bitwiseArray.view.forEach((segment, i) => {
       view[i] |= segment; // eslint-disable-line no-bitwise
     });
-    return new BitwiseArray(buffer, this.length);
+    return new BitwiseArrayOnArrayBuffer(buffer, this.length);
   }
 
   xor(bitwiseArray: BitwiseArray) {
-    if (bitwiseArray.length !== this.length) {
-      throw new TypeError('Length of two bitwiseArrays have to be equal!');
-    }
+    this.checkLength(bitwiseArray);
     const { buffer, view } = transfer(this.buffer);
+    if (!bitwiseArray.view) {
+      throw new TypeError(viewIsUndefinedMessage); // to prevent flowjs error
+    }
     bitwiseArray.view.forEach((segment, i) => {
       view[i] ^= segment; // eslint-disable-line no-bitwise
     });
-    return new BitwiseArray(buffer, this.length);
+    return new BitwiseArrayOnArrayBuffer(buffer, this.length);
   }
 
   count() {
@@ -285,6 +302,9 @@ class BitwiseArray {
   }
 
   select<T>(arr: Array<T>): Array<T> {
+    if (arr.length !== this.length) {
+      throw new TypeError('Length of bitwiseArrays have to be equal the length of array!');
+    }
     let index = 0;
     const leftmostBit = 2 ** (DIMENSION - 1);
     return this.view.reduce((prev, segment, i) => {
@@ -301,8 +321,9 @@ class BitwiseArray {
   }
 
   isEqual(bitwiseArray: BitwiseArray): boolean {
-    if (bitwiseArray.length !== this.length) {
-      throw new TypeError('Length of two bitwiseArrays have to be equal!');
+    this.checkLength(bitwiseArray);
+    if (!bitwiseArray.view) {
+      throw new TypeError(viewIsUndefinedMessage); // to prevent flowjs error
     }
     return bitwiseArray.view.every(
       (segment, i) => this.view[i] === segment, // eslint-disable-line no-bitwise
@@ -314,8 +335,8 @@ function createBitwiseArray<T>(
   arg: number | string | BitwiseArray | ArrayBuffer | Array<T>,
   arg2?: number | Array<T>,
 ): BitwiseArray {
-  return new BitwiseArray(arg, arg2);
+  return new BitwiseArrayOnArrayBuffer(arg, arg2);
 }
 
-export default BitwiseArray;
+export default BitwiseArrayOnArrayBuffer;
 export { createBitwiseArray };

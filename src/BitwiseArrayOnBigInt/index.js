@@ -1,6 +1,10 @@
 // @flow
 
+import type { BitwiseArray } from '../flowTypes';
+
 type BigInt = window.BigInt;
+
+const bitwiseArrayIsUndefined = 'BitwiseArray view undefined!';
 
 const parseBigInt = (numStr: string, radix: 2 | 32): BigInt => {
   if (!(radix === 2 || radix === 32)) {
@@ -44,9 +48,11 @@ class BitwiseArrayOnBigInt {
   value: BigInt;
 
   constructor<T>(
-    arg: number | string | BitwiseArrayOnBigInt | BigInt | Array<T>,
+    arg: number | string | BitwiseArray | BigInt | Array<T>,
     arg2?: Array<T> | number,
+    // $FlowFixMe
   ) {
+    // $FlowFixMe
     if (arg instanceof BitwiseArrayOnBigInt) {
       this.value = arg.value;
       this.length = arg.length;
@@ -86,9 +92,11 @@ class BitwiseArrayOnBigInt {
     } else if (typeof arg === 'string') {
       this.length = arg.length;
       this.value = parseBigInt(arg, 2);
-    } else {
+    } else if (typeof arg === 'number') {
       this.length = arg;
       this.value = window.BigInt(0);
+    } else {
+      throw new TypeError(`Incorrect type of arg: "${String(arg)}" or arg2: ${String(arg2)}`);
     }
     Object.freeze(this);
   }
@@ -108,7 +116,7 @@ class BitwiseArrayOnBigInt {
     return window.BigInt(1) << window.BigInt(this.length - pos - 1);
   }
 
-  checkLength(bitwiseArray: BitwiseArrayOnBigInt) {
+  checkLength(bitwiseArray: BitwiseArray) {
     if (bitwiseArray.length !== this.length) {
       throw new TypeError('Length of two bitwiseArrays have to be equal!');
     }
@@ -153,20 +161,29 @@ class BitwiseArrayOnBigInt {
     return Boolean(this.value & mask); // eslint-disable-line no-bitwise
   }
 
-  and(bitwiseArray: BitwiseArrayOnBigInt) {
+  and(bitwiseArray: BitwiseArray) {
     this.checkLength(bitwiseArray);
+    if (typeof bitwiseArray.value === 'undefined') {
+      throw new TypeError(bitwiseArrayIsUndefined); // to prevent flowjs error
+    }
     const value = this.value & bitwiseArray.value;
     return new BitwiseArrayOnBigInt(value, this.length);
   }
 
-  or(bitwiseArray: BitwiseArrayOnBigInt) {
+  or(bitwiseArray: BitwiseArray) {
     this.checkLength(bitwiseArray);
+    if (typeof bitwiseArray.value === 'undefined') {
+      throw new TypeError(bitwiseArrayIsUndefined); // to prevent flowjs error
+    }
     const value = this.value | bitwiseArray.value;
     return new BitwiseArrayOnBigInt(value, this.length);
   }
 
-  xor(bitwiseArray: BitwiseArrayOnBigInt) {
+  xor(bitwiseArray: BitwiseArray) {
     this.checkLength(bitwiseArray);
+    if (typeof bitwiseArray.value === 'undefined') {
+      throw new TypeError(bitwiseArrayIsUndefined); // to prevent flowjs error
+    }
     const value = this.value ^ bitwiseArray.value;
     return new BitwiseArrayOnBigInt(value, this.length);
   }
@@ -198,16 +215,16 @@ class BitwiseArrayOnBigInt {
     return result;
   }
 
-  isEqual(bitwiseArray: BitwiseArrayOnBigInt): boolean {
+  isEqual(bitwiseArray: BitwiseArray): boolean {
     this.checkLength(bitwiseArray);
     return bitwiseArray.value === this.value;
   }
 }
 
 function createBitwiseArray<T>(
-  arg: number | string | BitwiseArrayOnBigInt | BigInt | Array<T>,
+  arg: number | string | BitwiseArray | BigInt | Array<T>,
   arg2?: number | Array<T>,
-): BitwiseArrayOnBigInt {
+): BitwiseArray {
   return new BitwiseArrayOnBigInt(arg, arg2);
 }
 

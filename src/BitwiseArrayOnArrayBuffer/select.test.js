@@ -13,10 +13,7 @@ describe('select BitwiseArray method', () => {
   });
 
   test('should return array with 3 selected items', () => {
-    const bitwiseArray = createBitwiseArray(33)
-      .set(0)
-      .set(31)
-      .set(32);
+    const bitwiseArray = createBitwiseArray(34).set(0).set(31).set(32);
     const arr = [
       0,
       1,
@@ -59,12 +56,7 @@ describe('select BitwiseArray method', () => {
   });
 
   test('should return array with 3 selected items', () => {
-    const bitwiseArray = createBitwiseArray(33)
-      .set(2)
-      .set(4)
-      .set(8)
-      .set(16)
-      .set(32);
+    const bitwiseArray = createBitwiseArray(34).set(2).set(4).set(8).set(16).set(32);
     const arr = [
       0,
       1,

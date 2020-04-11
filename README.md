@@ -42,20 +42,18 @@ import BitwiseArray, { createBitwiseArray } from 'bitwise-array';
 ```javascript
 const a = createBitwiseArray(5); // with length of array
 a.toString(); // '00000'
-a.set(1);
-a.toString(); // '01000'
 
-const b = createBitwiseArray(a); // with another bitwise array
-b.toString(); // '01000'
+const b = createBitwiseArray('010011'); // with '0s & 1s" string
+b.toString(); // '010011'
+
+const c = createBitwiseArray(b); // with another bitwise array
+c.toString(); // '010011'
 
 const colors = ['RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'];
 const selectedColors = ['GREEN', 'INDIGO', 'ORANGE'];
 // with 1st arg: all items array, 2nd arg: selected items array
-const c = createBitwiseArray(colors, selectedColors);
-c.toString(); // '0101010'
-
-const d = createBitwiseArray('010011'); // with '0s & 1s" string
-d.toString(); // '010011'
+const d = createBitwiseArray(colors, selectedColors);
+d.toString(); // '0101010'
 ```
 
 or
@@ -63,20 +61,18 @@ or
 ```javascript
 const a = new BitwiseArray(5); // with length of array
 a.toString(); // '00000'
-a.set(1);
-a.toString(); // '01000'
 
-const b = new BitwiseArray(a); // with another bitwise array
-b.toString(); // '01000'
+const b = new BitwiseArray('010011'); // with '0s & 1s" string
+b.toString(); // '010011'
+
+const c = new BitwiseArray(b); // with another bitwise array
+c.toString(); // '01000'
 
 const colors = ['RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'];
 const selectedColors = ['GREEN', 'INDIGO', 'ORANGE'];
 // with 1st arg: all items array, 2nd arg: selected items array
-const c = new BitwiseArray(colors, selectedColors);
-c.toString(); // '0101010'
-
-const d = new BitwiseArray('010011'); // with '0s & 1s" string
-d.toString(); // '010011'
+const d = new BitwiseArray(colors, selectedColors);
+d.toString(); // '0101010'
 ```
 
 ## API
@@ -90,20 +86,36 @@ Example:
 ```javascript
 const colors = ['RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'];
 const selectedColors = ['GREEN', 'INDIGO', 'ORANGE'];
-const c = createBitwiseArray(colors, selectedColors);
-c.length; // 7
+const a = createBitwiseArray(colors, selectedColors);
+a.length; // 7
 ```
 
 ### Methods
 
-#### toString(): string
+#### toString(radix?: 35): string
 
 Example:
 
 ```javascript
-const a = createBitwiseArray(5);
+const a = createBitwiseArray(35);
+a.toString(); // '00000000000000000000000000000000000'
+a.toString(32); // '0'
 
-a.toString(); // '00000'
+const b = createBitwiseArray('00000000000000000000000000000000001');
+b.toString(); // '00000000000000000000000000000000001'
+b.toString(32); // '1'
+
+const c = createBitwiseArray('00000000000000000000000000000001001');
+c.toString(); // '00000000000000000000000000000001001'
+c.toString(32); // '9'
+
+const d = createBitwiseArray('00000000000000000000100000000001001');
+d.toString(); // '00000000000000000000100000000001001'
+d.toString(32); // 'g09'
+
+const e = createBitwiseArray('00000010000000000000100000000001001');
+e.toString(); // '00000010000000000000100000000001001'
+e.toString(32); // '800g09'
 ```
 
 #### set(pos: number): BitwiseArray
@@ -114,14 +126,11 @@ Example:
 const a = createBitwiseArray(35);
 a.toString(); // '00000000000000000000000000000000000'
 
-a.set(0);
-a.toString(); // '10000000000000000000000000000000000'
+a.set(0).toString(); // '10000000000000000000000000000000000'
 
-a.set(34);
-a.toString(); // '10000000000000000000000000000000001'
+a.set(0).set(34).toString(); // '10000000000000000000000000000000001'
 
-a.set(4);
-a.toString(); // '10001000000000000000000000000000001'
+a.set(0).set(34).set(4).toString(); // '10001000000000000000000000000000001'
 ```
 
 #### toggle(pos: number): BitwiseArray
@@ -132,14 +141,11 @@ Example:
 const a = createBitwiseArray(35);
 a.toString(); // '00000000000000000000000000000000000'
 
-a.toggle(0);
-a.toString(); // '10000000000000000000000000000000000'
+a.toggle(0).toString(); // '10000000000000000000000000000000000'
 
-a.toggle(0);
-a.toString(); // '00000000000000000000000000000000000'
+a.toggle(0).toggle(0).toString(); // '00000000000000000000000000000000000'
 
-a.toggle(0);
-a.toString(); // '10000000000000000000000000000000000'
+a.toggle(0).toggle(0).toggle(0).toString(); // '10000000000000000000000000000000000'
 ```
 
 #### get(pos: number): boolean
@@ -147,15 +153,14 @@ a.toString(); // '10000000000000000000000000000000000'
 Example:
 
 ```javascript
-const a = createBitwiseArray(35);
-a.toString(); // '00000000000000000000000000000000000'
-
-a.get(0); // false
-
-a.set(0);
-a.toString(); // '10000000000000000000000000000000000'
+const a = createBitwiseArray('10100');
+a.toString(); // '10100'
 
 a.get(0); // true
+a.get(1); // false
+a.get(2); // true
+a.get(3); // false
+a.get(4); // false
 ```
 
 #### clear(): BitwiseArray
@@ -163,13 +168,10 @@ a.get(0); // true
 Example:
 
 ```javascript
-const a = createBitwiseArray(5);
-a.toString(); // '00000'
-a.set(0).set(3);
-a.toString(); // '10010'
+const a = createBitwiseArray('11101');
+a.toString(); // '11101'
 
-a.clear();
-a.toString(); // '00000'
+a.clear().toString(); // '00000'
 ```
 
 #### invert(): BitwiseArray
@@ -177,13 +179,10 @@ a.toString(); // '00000'
 Example:
 
 ```javascript
-const a = createBitwiseArray(5);
-a.toString(); // '00000'
-a.set(0).set(3);
+const a = createBitwiseArray('10010';
 a.toString(); // '10010'
 
-a.invert();
-a.toString(); // '01101'
+a.invert().toString(); // '01101'
 ```
 
 #### and(secondBitwiseArray: BitwiseArray): BitwiseArray
@@ -193,14 +192,14 @@ Example:
 ```javascript
 const a = createBitwiseArray(5);
 a.toString(); // '00000'
-a.set(0).set(2);
-a.toString(); // '10100'
-const b = createBitwiseArray(5);
-b.set(2).set(4);
-b.toString(); // '00101'
 
-a.and(b);
-a.toString(); // '00100'
+const b = a.set(0).set(2);
+b.toString(); // '10100'
+
+const c = a.set(2).set(4);
+c.toString(); // '00101'
+
+b.and(c).toString(); // '00100'
 ```
 
 #### or(secondBitwiseArray: BitwiseArray): BitwiseArray
@@ -210,14 +209,14 @@ Example:
 ```javascript
 const a = createBitwiseArray(5);
 a.toString(); // '00000'
-a.set(0).set(2);
-a.toString(); // '10100'
-const b = createBitwiseArray(5);
-b.set(2).set(4);
-b.toString(); // '00101'
 
-a.or(b);
-a.toString(); // '10101'
+const b = a.set(0).set(2);
+b.toString(); // '10100'
+
+const c = a.set(2).set(4);
+c.toString(); // '00101'
+
+b.or(c).toString(); // '10101'
 ```
 
 #### xor(secondBitwiseArray: BitwiseArray): BitwiseArray
@@ -227,14 +226,14 @@ Example:
 ```javascript
 const a = createBitwiseArray(5);
 a.toString(); // '00000'
-a.set(0).set(2);
-a.toString(); // '10100'
-const b = createBitwiseArray(5);
-b.set(2).set(4);
-b.toString(); // '00101'
 
-a.xor(b);
-a.toString(); // '10001'
+const b = a.set(0).set(2);
+b.toString(); // '10100'
+
+const c = a.set(2).set(4);
+c.toString(); // '00101'
+
+b.xor(c).toString(); // '10001'
 ```
 
 #### isEqual(secondBitwiseArray: BitwiseArray): boolean
@@ -242,19 +241,18 @@ a.toString(); // '10001'
 Example:
 
 ```javascript
-const a = createBitwiseArray(5);
-a.set(0).set(2);
+const a = createBitwiseArray('10100');
 a.toString(); // '10100'
-const b = createBitwiseArray(5);
-b.set(2).set(0);
+
+const b = createBitwiseArray('10100');
 b.toString(); // '10100'
 
 a.isEqual(b); // true
 
-b.set(3);
-b.toString(); // '10110'
+const c = createBitwiseArray('10110');
+c.toString(); // '10110'
 
-a.isEqual(b); // false
+a.isEqual(c); // false
 ```
 
 #### select(arr: Array<T>): Array<T>

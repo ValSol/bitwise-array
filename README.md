@@ -179,7 +179,7 @@ a.clear().toString(); // '00000'
 Example:
 
 ```javascript
-const a = createBitwiseArray('10010';
+const a = createBitwiseArray('10010');
 a.toString(); // '10010'
 
 a.invert().toString(); // '01101'
